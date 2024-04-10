@@ -3,7 +3,12 @@ pipeline {
   stages {
     stage('Echo GitHub') {
       steps {
+        echo "env.JOB_NAME: ${env.JOB_NAME}"
+        echo "####"
+        echo "Output getReponame.-"
+        echo "####"
         getRepoName(env.JOB_NAME)
+        echo "####"
       }
     }
   }
