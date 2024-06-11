@@ -7,6 +7,7 @@ Referencia: [Build your Go image](https://docs.docker.com/language/golang/build-
 Crea una *imagen de contenedor* que incluya todo lo que necesitas para ejecutar una aplicación **Go**: el archivo binario compilado, la *runtime de Go*, las bibliotecas y el resto de recursos que requiera la aplicación.
 
 ## Software requerido
+
 Necesita lo siguiente:
 
 - [*Go* versión 1.19 o posterior](https://golang.org/dl/)
@@ -44,47 +45,46 @@ El archivo `main.go`` de la aplicación es sencillo si estás familiarizado con 
 package main
 
 import (
-	"net/http"
-	"os"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+    "net/http"
+    "os"
+    "github.com/labstack/echo/v4"
+    "github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
 
-	e := echo.New()
+    e := echo.New()
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+    e.Use(middleware.Logger())
+    e.Use(middleware.Recover())
 
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Hello, Docker! <3")
-	})
+    e.GET("/", func(c echo.Context) error {
+        return c.HTML(http.StatusOK, "Hello, Docker! <3")
+    })
 
-	e.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
-	})
+    e.GET("/health", func(c echo.Context) error {
+        return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
+    })
 
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "8080"
-	}
+    httpPort := os.Getenv("PORT")
+    if httpPort == "" {
+        httpPort = "8080"
+    }
 
-	e.Logger.Fatal(e.Start(":" + httpPort))
+    e.Logger.Fatal(e.Start(":" + httpPort))
 }
 
 // Simple implementation of an integer minimum
 // Adapted from: https://gobyexample.com/testing-and-benchmarking
 func IntMin(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+    if a < b {
+        return a
+    }
+    return b
 }
 ```
 
-## Prueba de humo de la aplicación.
+## Prueba de humo de la aplicación
 
 Inicia tu aplicación y asegúrate de que se esté ejecutando. Abre un terminal de intérprete de comandos y navega hasta el directorio en el que se clonó el repositorio del proyecto. De ahora en adelante el directorio del proyecto.
 
@@ -94,7 +94,7 @@ go run main.go
 
 Esto debería compilar e iniciar el servidor como una aplicación de primer plano, generando el banner, como se ilustra en la siguiente figura.
 
-```
+```Txt
    ____    __
   / __/___/ /  ___
  / _// __/ _ \/ _ \
@@ -108,31 +108,31 @@ ____________________________________O/_______
 
 Ejecute una prueba de humo rápida accediendo a la aplicación en <http://localhost:8080>. Puedes usar un navegador web, o un comando *CURL* en la terminal:
 
-```BASH
+```Bash
 curl http://localhost:8080/
 ```
 
-```
+```Txt
 Hello, Docker! <3
 ```
 
-Esto verifica que la aplicación se compila localmente e inicia sin errores. 
+Esto verifica que la aplicación se compila localmente e inicia sin errores.
 
 Ya estamos listos para colocar la aplicación en un *contenedor*.
 
-## Crea un *Dockerfile* para la aplicación.
+## Crea un *Dockerfile* para la aplicación
 
 Para crear una *imagen de contenedor* con **Docker** se necesita un archivo *Dockerfile* con instrucciones de construcción.
 
 El archivo *Dockerfile* empieza con la línea *parser* (opcional) que le indica al *BuildKit* que interprete su archivo de acuerdo con las reglas gramaticales de la versión especificada.
 
-```DOCKERFILE
+```Dockefile
 # syntax=docker/dockerfile:1
 ```
 
 Luego le dice a *Docker* qué imagen base le gustaría usar para su aplicación:
 
-```DOCKERFILE
+```Dockerfile
 FROM golang:1.19
 
 ```
@@ -287,7 +287,7 @@ Para enumerar imágenes, ejecute el comando `docker image ls` o `docker images` 
 docker image ls
 ```
 
-```
+```Txt
 REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
 docker-gs-ping                   latest    7f153fbcc0a8   2 minutes ago   1.11GB
 ...
@@ -315,7 +315,7 @@ Ahora ejecutando nuevamente el comando `docker image ls` veremos la lista actual
 docker image ls
 ```
 
-```
+```Txt
 REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
 docker-gs-ping                   latest    7f153fbcc0a8   6 minutes ago   1.11GB
 docker-gs-ping                   v1.0      7f153fbcc0a8   6 minutes ago   1.11GB
@@ -330,7 +330,7 @@ Elimina la *etiqueta* que acabas de crear. Para hacer esto, usará el comando `d
 docker image rm docker-gs-ping:v1.0
 ```
 
-```
+```Txt
 Untagged: docker-gs-ping:v1.0
 ```
 
@@ -344,7 +344,7 @@ docker image ls
 
 Verás que la *etiqueta* `v1.0` ya no está en la lista de *imágenes* mantenida por la *instancia de Docker*.
 
-```
+```Txt
 REPOSITORY                       TAG       IMAGE ID       CREATED         SIZE
 docker-gs-ping                   latest    7f153fbcc0a8   7 minutes ago   1.11GB
 ...
@@ -411,7 +411,7 @@ Al comparar los tamaños de `docker-gs-ping:multistage` y `docker-gs-ping:latest
 docker image ls
 ```
 
-```
+```Txt
 REPOSITORY       TAG          IMAGE ID       CREATED              SIZE
 docker-gs-ping   multistage   e3fdde09f172   About a minute ago   28.1MB
 docker-gs-ping   latest       336a3f164d0f   About an hour ago    1.11GB
@@ -423,11 +423,11 @@ Hay mucho más sobre las construcciones en múltiples etapas, incluida la posibi
 
 ---
 
-# Lanzar *imágenes de contenedor*, *ejecutar contenedores*
+## Lanzar *imágenes de contenedor*, *ejecutar contenedores*
 
-## Descripción general
+### Descripción general, ejecución de *imágenes de contenedor*
 
-En el tema anterior, creamos un archivo *Dockerfile* para la aplicación **Go** de ejemplo, se creó una *imagen de Docker* usando el comando `docker build`. Ahora que tenemos la *imagen*, podemos ejecutarla y ver si la aplicación se ejecuta correctamente.
+En el apartado anterior, creamos un archivo *Dockerfile* para la aplicación **Go** de ejemplo, se creó una *imagen de Docker* usando el comando `docker build`. Ahora que tenemos la *imagen*, podemos ejecutarla y ver si la aplicación se ejecuta correctamente.
 
 Un *contenedor* es un proceso normal del sistema operativo excepto que este proceso está aislado y tiene su propio sistema de archivos, su propia red y su propio árbol de procesos aislado separado del host.
 
@@ -437,7 +437,7 @@ Para ejecutar una *imagen* dentro de un *contenedor*, usa el comando `docker run
 docker run docker-gs-ping
 ```
 
-```
+```Txt
    ____    __
   / __/___/ /  ___
  / _// __/ _ \/ _ \
@@ -457,7 +457,7 @@ Realiza una solicitud GET al servidor utilizando el comando `curl`.
 curl http://localhost:8080/
 ```
 
-```
+```Txt
 curl: (7) Failed to connect to localhost port 8080: Connection refused
 ```
 
@@ -479,7 +479,7 @@ Ahora, vuelve a ejecutar el comando curl.
 curl http://localhost:8080/
 ```
 
-```
+```Txt
 Hello, Docker! <3
 ```
 
@@ -495,7 +495,7 @@ Esto está bien, pero la aplicación de ejemplo es un servidor web y el contened
 docker run -d -p 8080:8080 docker-gs-ping
 ```
 
-```
+```Txt
 d75e61fcad1e0c0eca69a3f767be6ba28a66625ce4dc42201a8a323e8313c14e
 ```
 
@@ -507,7 +507,7 @@ Nos aseguramos que el contenedor se esté ejecutando. Ejecuta el mismo comando `
 curl http://localhost:8080/
 ```
 
-```
+```Txt
 Hello, Docker! <3
 ```
 
@@ -519,7 +519,7 @@ Dado que se ejecutó el *contenedor* en segundo plano, ¿cómo saber si el *cont
 docker ps
 ```
 
-```
+```Txt
 CONTAINER ID   IMAGE            COMMAND             CREATED          STATUS          PORTS                    NAMES
 d75e61fcad1e   docker-gs-ping   "/docker-gs-ping"   41 seconds ago   Up 40 seconds   0.0.0.0:8080->8080/tcp   inspiring_ishizaka
 ```
@@ -532,7 +532,7 @@ Probablemente te estés preguntando de dónde viene el nombre de tu *contenedor*
 docker stop inspiring_ishizaka
 ```
 
-```
+```Txt
 inspiring_ishizaka
 ```
 
@@ -542,7 +542,7 @@ Ahora vuelva a ejecutar el comando `docker ps` para ver de nuevo la lista de *co
 docker ps
 ```
 
-```
+```Txt
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
@@ -554,7 +554,7 @@ Los *contenedores Docker* se pueden iniciar, detener y reiniciar. Cuando detiene
 docker ps --all
 ```
 
-```
+```Txt
 CONTAINER ID   IMAGE            COMMAND                  CREATED              STATUS                      PORTS     NAMES
 d75e61fcad1e   docker-gs-ping   "/docker-gs-ping"        About a minute ago   Exited (2) 23 seconds ago             inspiring_ishizaka
 f65dbbb9a548   docker-gs-ping   "/docker-gs-ping"        3 minutes ago        Exited (2) 2 minutes ago              wizardly_joliot
@@ -569,13 +569,14 @@ Reinicia el *contenedor* que acabas de detener. Localiza el nombre del *contened
 ```BASH
 docker restart inspiring_ishizaka
 ```
+
 Ahora, enumera todos los contenedores nuevamente usando el comando `ps`:
 
 ```BASH
 docker ps -a
 ```
 
-```
+```Txt
 CONTAINER ID   IMAGE            COMMAND                  CREATED          STATUS                     PORTS                    NAMES
 d75e61fcad1e   docker-gs-ping   "/docker-gs-ping"        2 minutes ago    Up 5 seconds               0.0.0.0:8080->8080/tcp   inspiring_ishizaka
 f65dbbb9a548   docker-gs-ping   "/docker-gs-ping"        4 minutes ago    Exited (2) 2 minutes ago                            wizardly_joliot
@@ -593,7 +594,7 @@ Detén el *contenedor* que acaba de iniciar. Busca el nombre del *contenedor* en
 docker stop inspiring_ishizaka
 ```
 
-```
+```Txt
 inspiring_ishizaka
 ```
 
@@ -607,7 +608,7 @@ Asegúrese de reemplazar los ***nombres de los contenedores*** en el siguiente c
 docker rm inspiring_ishizaka wizardly_joliot magical_carson gifted_mestorf
 ```
 
-```
+```Txt
 inspiring_ishizaka
 wizardly_joliot
 magical_carson
@@ -620,11 +621,11 @@ Ahora, abordaremos el molesto problema de los nombres aleatorios. La práctica e
 
 Para nombrar un contenedor, debes pasar el modificador  `--name` al comando `run`:
 
-```
+```Bash
 docker run -d -p 8080:8080 --name rest-server docker-gs-ping
 ```
 
-```
+```Txt
 3bbc6a3102ea368c8b966e1878a5ea9b1fc61187afaac1276c41db22e4b7f48f
 ```
 
@@ -632,7 +633,7 @@ docker run -d -p 8080:8080 --name rest-server docker-gs-ping
 docker ps
 ```
 
-```
+```Txt
 CONTAINER ID   IMAGE            COMMAND             CREATED          STATUS          PORTS                    NAMES
 3bbc6a3102ea   docker-gs-ping   "/docker-gs-ping"   25 seconds ago   Up 24 seconds   0.0.0.0:8080->8080/tcp   rest-server
 ```
