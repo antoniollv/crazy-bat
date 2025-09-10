@@ -4,4 +4,4 @@ RUN apk add envsubst
 WORKDIR /app
 COPY index.html ./
 EXPOSE 8080
-CMD [ "/bin/sh", "-c", "apk add envsubst && while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < /app/index.html; } | nc -l -p 8080 -N; done" ]
+CMD [ "/bin/sh", "-c", "while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < /app/index.html; } | nc -lk -p 8080; done" ]
