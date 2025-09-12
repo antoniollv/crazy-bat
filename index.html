@@ -77,21 +77,25 @@
     let mouse = { x: 350, y: 100 };
     let batPos = { x: 480, y: 0 };
     let following = false;
+    let moveBatFrame = null;
+    let moveBatBackFrame = null;
+    // Add a flag to block mousemove updates when not following
+    let allowMouseMove = true;
+
     // Update mouse position relative to the container
     container.addEventListener('mousemove', (e) => {
+      if (!allowMouseMove) return;
       const rect = container.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
-    });
-    let moveBatFrame = null;
-    let moveBatBackFrame = null;
+    });    
     // Switch to chase mode
     bat.addEventListener('mouseover', () => {
       if (!following) {
         bat.style.display = 'none';
         batV.style.display = 'block';
         following = true;
-        // Cancel any previous return animation
+        allowMouseMove = true;
         if (moveBatBackFrame) {
           cancelAnimationFrame(moveBatBackFrame);
           moveBatBackFrame = null;
@@ -114,6 +118,7 @@
     // Reset animation when leaving the container
     container.addEventListener('mouseleave', () => {
       following = false;
+      allowMouseMove = false;
       batV.style.display = 'block';
       // Cancel any previous chase or return animation
       if (moveBatFrame) {
