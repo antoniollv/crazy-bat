@@ -18,6 +18,18 @@ The text is injected into `index.html` *on the fly* using the ***envsubst*** uti
 
 ### Local test
 
+Open a local shell, and clone de repository
+
+```bash
+git clone https://github.com/antoniollv/crazy-bat.git
+```
+
+Change to repository directory
+
+```bash
+cd crazy-bat
+```
+
 Set the environment variable `BAT_SAY`:
 
 ```bash
@@ -27,8 +39,10 @@ export BAT_SAY="What's up, doc?"
 Run ***Netcat***:
 
 ```bash
-while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -l -p 8080; done
+while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -lNp 8080; done
 ```
+
+Then access the application in your browser, <http://localhost:8080>
 
 ## Test with container
 
@@ -91,7 +105,7 @@ Please follow these steps:
 
 Prueba de concepto de un contenedor que crea mediante ***Netcat*** un servicio HTTP en el puerto 8080.
 
-Muestra un murciélago durmiendo. Al pasar el puntero del ratón sobre él, despierta y persigue al puntero, mostrando el texto pasado mediante la variable de entorno `BAT_SAY`, por ejemplo export `BAT_SAY="What's up, doc?"` o cualquier otro text .
+Muestra un murciélago durmiendo. Al pasar el puntero del ratón sobre él, despierta y persigue al puntero, mostrando el texto pasado mediante la variable de entorno `BAT_SAY`, por ejemplo, export `BAT_SAY="What's up, doc?"` o cualquier otro texto.
 
 Para que se muestre el texto se modifica el archivo `index.html` *al vuelo* mediante la utilidad ***envsubst***.
 
@@ -114,7 +128,7 @@ export BAT_SAY="What's up, doc?"
 Ejecución de ***Netcat***:
 
 ```bash
-while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -l -p 8080; done
+while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -lNp 8080; done
 ```
 
 ## Prueba mediante contenedor
@@ -145,10 +159,10 @@ Si obtienes un error o no ocurre nada, puede que el puerto 8080 ya esté en uso 
 
 **Cómo cambiar el puerto para este proyecto:**
 
-- Para pruebas locales con Netcat, usa otro puerto (por ejemplo, 8081):
+- Para pruebas locales con *Netcat*, usa otro puerto (por ejemplo, 8081):
 
   ```bash
-  while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -l -p 8081; done
+  while true; do { echo -e 'HTTP/1.1 200 OK\r\n'; envsubst < index.html; } | nc -lNp 8081; done
   ```
 
 - Para Docker, mapea un puerto externo diferente (por ejemplo, 8082):
