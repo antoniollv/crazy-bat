@@ -105,7 +105,7 @@ Please follow these steps:
 
 Prueba de concepto de un contenedor que crea mediante ***Netcat*** un servicio HTTP en el puerto 8080.
 
-Muestra un murciélago durmiendo. Al pasar el puntero del ratón sobre él, despierta y persigue al puntero, mostrando el texto pasado mediante la variable de entorno `BAT_SAY`, por ejemplo, export `BAT_SAY="What's up, doc?"` o cualquier otro text .
+Muestra un murciélago durmiendo. Al pasar el puntero del ratón sobre él, despierta y persigue al puntero, mostrando el texto pasado mediante la variable de entorno `BAT_SAY`, por ejemplo, export `BAT_SAY="What's up, doc?"` o cualquier otro texto.
 
 Para que se muestre el texto se modifica el archivo `index.html` *al vuelo* mediante la utilidad ***envsubst***.
 
