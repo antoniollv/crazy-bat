@@ -1,5 +1,7 @@
 # Crazy Bat Project
 
+![crazy bat](crazy_bat.svg)
+
 ## Description
 
 Proof of concept of a container that creates an HTTP service on port 8080 using ***Netcat***.
