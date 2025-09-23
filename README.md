@@ -1,5 +1,7 @@
 # Crazy Bat Project
 
+[![Test Status](https://github.com/antoniollv/crazy-bat/actions/workflows/test.yml/badge.svg)](https://github.com/antoniollv/crazy-bat/actions/workflows/test.yml)
+
 ![crazy bat](crazy_bat.svg)
 
 ## Description

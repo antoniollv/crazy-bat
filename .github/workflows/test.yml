@@ -1,0 +1,63 @@
+name: Test Container Service with ngrok
+
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]    
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t crazy-bat-app .
+
+      - name: Run Docker container
+        run: docker run -d -p 8080:8080 -e BAT_SAY="Test with ngrok" --name crazy-bat-test crazy-bat-app
+
+      - name: Download and set up ngrok
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt update && sudo apt install ngrok
+
+      - name: Authenticate ngrok
+        run: ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
+
+      - name: Start ngrok tunnel
+        run: |
+          nohup ngrok http 8080 --log=stdout > ngrok.log &
+          sleep 5
+          curl http://localhost:4040/api/tunnels > tunnels.json
+
+      - name: Get public URL
+        id: ngrok
+        run: |
+          NGROK_URL=$(jq -r '.tunnels[0].public_url' tunnels.json)
+          echo "NGROK_URL=${NGROK_URL}" >> $GITHUB_ENV
+
+      - name: Output ngrok public URL
+        run: echo "🔗  Service is publicly available at $NGROK_URL"
+
+      - name: Wait with countdown and ngrok URL reminder
+        run: |
+          for i in $(seq 60 -1 1); do
+            if [ $((i % 3)) -eq 0 ]; then
+              echo "⏳ Waiting... $((i*3)) seconds remaining"
+              echo "🔗 You can temporarily access the service at: $NGROK_URL"
+            fi
+            sleep 3
+          done
+          echo "⏰ Waiting time is over!"
+        env:
+          NGROK_URL: ${{ env.NGROK_URL }}
+
+      - name: Stop container
+        if: always()
+        run: docker stop crazy-bat-test && docker rm crazy-bat-test
