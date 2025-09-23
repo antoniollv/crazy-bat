@@ -26,7 +26,7 @@ jobs:
           curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
           sudo apt update && sudo apt install ngrok
-          
+
       - name: Authenticate ngrok
         run: ngrok config add-authtoken ${{ secrets.NGROK_AUTHTOKEN }}
 
@@ -43,10 +43,20 @@ jobs:
           echo "NGROK_URL=${NGROK_URL}" >> $GITHUB_ENV
 
       - name: Output ngrok public URL
-        run: echo "Service is publicly available at $NGROK_URL"
+        run: echo "🔗  Service is publicly available at $NGROK_URL"
 
-      - name: Wait (optional)
-        run: sleep 180  # Wait for 3 minutes to allow manual testing if needed
+      - name: Wait with countdown and ngrok URL reminder
+        run: |
+          for i in $(seq 60 -1 1); do
+            if [ $((i % 3)) -eq 0 ]; then
+              echo "⏳ Waiting... $((i*3)) seconds remaining"
+              echo "🔗 You can temporarily access the service at: $NGROK_URL"
+            fi
+            sleep 3
+          done
+          echo "⏰ Waiting time is over!"
+        env:
+          NGROK_URL: ${{ env.NGROK_URL }}
 
       - name: Stop container
         if: always()
