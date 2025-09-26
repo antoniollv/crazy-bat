@@ -22,7 +22,7 @@ The text is injected into `index.html` *on the fly* using the ***envsubst*** uti
 
 ### Local test
 
-Open a local shell, and clone de repository
+Open a local shell, and clone repository
 
 ```bash
 git clone https://github.com/antoniollv/crazy-bat.git
