@@ -18,8 +18,10 @@ jobs:
       - name: Build Docker image
         run: docker build -t crazy-bat-app .
 
-      - name: Run Docker container
-        run: docker run -d -p 8080:8080 -e BAT_SAY="Test with ngrok" --name crazy-bat-test crazy-bat-app
+      - name: Run Docker container          
+        run: |
+          BAT_SAY="Hi from<BR>$(hostname)-$(hostname -I | awk '{print $1}')"
+          docker run -d -p 8080:8080 -e BAT_SAY="$BAT_SAY" --name crazy-bat-test crazy-bat-app
 
       - name: Download and set up ngrok
         run: |
